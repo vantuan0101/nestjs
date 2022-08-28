@@ -3,15 +3,10 @@ import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuthDto } from './dto';
 export declare class AuthService {
+    private jwt;
     private prisma;
     private config;
-    private jwt;
-    constructor(prisma: PrismaService, config: ConfigService, jwt: JwtService);
+    constructor(jwt: JwtService, prisma: PrismaService, config: ConfigService);
     signup(dto: AuthDto): Promise<import(".prisma/client").User>;
-    signin(dto: AuthDto): Promise<{
-        access_token: string;
-    }>;
-    signToken(userId: number, email: string): Promise<{
-        access_token: string;
-    }>;
+    signin(dto: AuthDto): Promise<import(".prisma/client").User>;
 }

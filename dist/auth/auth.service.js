@@ -17,10 +17,10 @@ const runtime_1 = require("@prisma/client/runtime");
 const config_1 = require("@nestjs/config");
 const prisma_service_1 = require("../prisma/prisma.service");
 let AuthService = class AuthService {
-    constructor(prisma, config, jwt) {
+    constructor(jwt, prisma, config) {
+        this.jwt = jwt;
         this.prisma = prisma;
         this.config = config;
-        this.jwt = jwt;
     }
     async signup(dto) {
         try {
@@ -58,32 +58,18 @@ let AuthService = class AuthService {
             if (!validPassword) {
                 throw new common_1.ForbiddenException('Credentails are invalid');
             }
-            return this.signToken(user.id, user.email);
+            return user;
         }
         catch (error) {
             throw new common_1.ForbiddenException(error);
         }
     }
-    async signToken(userId, email) {
-        const payload = {
-            sub: userId,
-            email,
-        };
-        const secret = this.config.get('JWT_SECRET');
-        const token = await this.jwt.signAsync(payload, {
-            expiresIn: '15m',
-            secret: secret,
-        });
-        return {
-            access_token: token,
-        };
-    }
 };
 AuthService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService,
-        config_1.ConfigService,
-        jwt_1.JwtService])
+    __metadata("design:paramtypes", [jwt_1.JwtService,
+        prisma_service_1.PrismaService,
+        config_1.ConfigService])
 ], AuthService);
 exports.AuthService = AuthService;
 //# sourceMappingURL=auth.service.js.map
