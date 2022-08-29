@@ -14,7 +14,9 @@ const auth_module_1 = require("./auth/auth.module");
 const auth_service_1 = require("./auth/auth.service");
 const bookmark_module_1 = require("./bookmark/bookmark.module");
 const prisma_module_1 = require("./prisma/prisma.module");
+const user_controller_1 = require("./user/user.controller");
 const user_module_1 = require("./user/user.module");
+const user_service_1 = require("./user/user.service");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -28,8 +30,8 @@ AppModule = __decorate([
             user_module_1.UserModule,
             prisma_module_1.PrismaModule,
         ],
-        controllers: [auth_controller_1.AuthController],
-        providers: [auth_service_1.AuthService],
+        controllers: [auth_controller_1.AuthController, user_controller_1.UserController],
+        providers: [auth_service_1.AuthService, user_service_1.UserService],
     })
 ], AppModule);
 exports.AppModule = AppModule;

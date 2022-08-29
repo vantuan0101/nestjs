@@ -77,33 +77,33 @@ export class AuthService {
         );
       }
       // delete user.hash;
-      return user;
-      // return this.signToken(user.id, user.email);
+      // return user;
+      return this.signToken(user.id, user.email);
     } catch (error) {
       throw new ForbiddenException(error);
     }
   }
 
-  // async signToken(
-  //   userId: number,
-  //   email: string,
-  // ): Promise<{ access_token: string }> {
-  //   const payload = {
-  //     sub: userId,
-  //     email,
-  //   };
-  //   const secret = this.config.get('JWT_SECRET');
+  async signToken(
+    userId: number,
+    email: string,
+  ): Promise<{ access_token: string }> {
+    const payload = {
+      sub: userId,
+      email,
+    };
+    const secret = this.config.get('JWT_SECRET');
 
-  //   const token = await this.jwt.signAsync(
-  //     payload,
-  //     {
-  //       expiresIn: '15m',
-  //       secret: secret,
-  //     },
-  //   );
+    const token = await this.jwt.signAsync(
+      payload,
+      {
+        expiresIn: '15m',
+        secret: secret,
+      },
+    );
 
-  //   return {
-  //     access_token: token,
-  //   };
-  // }
+    return {
+      access_token: token,
+    };
+  }
 }

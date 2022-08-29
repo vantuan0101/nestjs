@@ -58,11 +58,25 @@ let AuthService = class AuthService {
             if (!validPassword) {
                 throw new common_1.ForbiddenException('Credentails are invalid');
             }
-            return user;
+            return this.signToken(user.id, user.email);
         }
         catch (error) {
             throw new common_1.ForbiddenException(error);
         }
+    }
+    async signToken(userId, email) {
+        const payload = {
+            sub: userId,
+            email,
+        };
+        const secret = this.config.get('JWT_SECRET');
+        const token = await this.jwt.signAsync(payload, {
+            expiresIn: '15m',
+            secret: secret,
+        });
+        return {
+            access_token: token,
+        };
     }
 };
 AuthService = __decorate([
