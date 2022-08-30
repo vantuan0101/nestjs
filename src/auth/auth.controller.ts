@@ -8,7 +8,7 @@ import {
 import { Request } from 'express';
 import { AuthDto } from './dto';
 
-@Controller('api/v1/auth')
+@Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
   @Post('signup')

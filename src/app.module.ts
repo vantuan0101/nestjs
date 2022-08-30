@@ -1,14 +1,12 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
-import { AuthController } from './auth/auth.controller';
 import { AuthModule } from './auth/auth.module';
-import { AuthService } from './auth/auth.service';
 import { BookmarkModule } from './bookmark/bookmark.module';
+import { DoccontentModule } from './doccontent/doccontent.module';
+import { DocsModule } from './docs/docs.module';
 import { PrismaModule } from './prisma/prisma.module';
-import { UserController } from './user/user.controller';
 import { UserModule } from './user/user.module';
-import { UserService } from './user/user.service';
 
 @Module({
   imports: [
@@ -19,8 +17,8 @@ import { UserService } from './user/user.service';
     BookmarkModule,
     UserModule,
     PrismaModule,
+    DocsModule,
+    DoccontentModule,
   ],
-  controllers: [AuthController, UserController],
-  providers: [AuthService, UserService],
 })
 export class AppModule {}
