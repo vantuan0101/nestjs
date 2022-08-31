@@ -4,6 +4,6 @@ import { DoccontentController } from './doccontent.controller';
 
 @Module({
   providers: [DoccontentService],
-  controllers: [DoccontentController]
+  controllers: [DoccontentController],
 })
 export class DoccontentModule {}

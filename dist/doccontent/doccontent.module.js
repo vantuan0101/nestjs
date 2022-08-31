@@ -15,7 +15,7 @@ let DoccontentModule = class DoccontentModule {
 DoccontentModule = __decorate([
     (0, common_1.Module)({
         providers: [doccontent_service_1.DoccontentService],
-        controllers: [doccontent_controller_1.DoccontentController]
+        controllers: [doccontent_controller_1.DoccontentController],
     })
 ], DoccontentModule);
 exports.DoccontentModule = DoccontentModule;
