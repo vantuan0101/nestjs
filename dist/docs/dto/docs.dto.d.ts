@@ -1,5 +1,5 @@
 export declare class DocsDto {
     name: string;
-    title: string[];
-    slug: string[];
+    title: string;
+    slug: string;
 }

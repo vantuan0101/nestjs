@@ -14,44 +14,54 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DocsController = void 0;
 const common_1 = require("@nestjs/common");
+const roles_decorator_1 = require("../auth/guard/roles.decorator");
+const roles_guard_1 = require("../auth/guard/roles.guard");
+const roles_enum_1 = require("../shared/enum/roles.enum");
+const jwt_guard_1 = require("./../auth/guard/jwt.guard");
 const docs_service_1 = require("./docs.service");
 const dto_1 = require("./dto");
 let DocsController = class DocsController {
     constructor(DocsService) {
         this.DocsService = DocsService;
     }
-    getAll() {
-        return this.DocsService.getAll();
+    getAll(q, sort, limit, skip) {
+        return this.DocsService.getAllDocs(q, sort, limit, skip);
     }
     getOne(id) {
-        return this.DocsService.getOne(id);
+        return this.DocsService.getOneDocs(id);
     }
     create(dto) {
-        console.log({ dto });
-        return 'this.DocsService.create(dto);';
+        return this.DocsService.createDocs(dto);
     }
     update(id, dto) {
-        return this.DocsService.update(id, dto);
+        console.log(dto);
+        return this.DocsService.updateDocs(id, dto);
     }
     delete(id) {
-        return this.DocsService.delete(id);
+        return this.DocsService.deleteDocs(+id);
     }
 };
 __decorate([
     (0, common_1.Get)(),
+    __param(0, (0, common_1.Query)('q')),
+    __param(1, (0, common_1.Query)('sort')),
+    __param(2, (0, common_1.Query)('limit', new common_1.DefaultValuePipe(10), common_1.ParseIntPipe)),
+    __param(3, (0, common_1.Query)('skip', new common_1.DefaultValuePipe(0), common_1.ParseIntPipe)),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [String, String, Number, Number]),
     __metadata("design:returntype", void 0)
 ], DocsController.prototype, "getAll", null);
 __decorate([
     (0, common_1.Get)(':id'),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", void 0)
 ], DocsController.prototype, "getOne", null);
 __decorate([
     (0, common_1.Post)(),
+    (0, common_1.UseGuards)(jwt_guard_1.JwtGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)(roles_enum_1.RoleType.Admin),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [dto_1.DocsDto]),
@@ -59,15 +69,19 @@ __decorate([
 ], DocsController.prototype, "create", null);
 __decorate([
     (0, common_1.Patch)(':id'),
-    __param(0, (0, common_1.Param)('id')),
+    (0, common_1.UseGuards)(jwt_guard_1.JwtGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)(roles_enum_1.RoleType.Admin),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, dto_1.DocsDto]),
+    __metadata("design:paramtypes", [Number, Object]),
     __metadata("design:returntype", void 0)
 ], DocsController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(':id'),
-    __param(0, (0, common_1.Param)('id')),
+    (0, common_1.UseGuards)(jwt_guard_1.JwtGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)(roles_enum_1.RoleType.Admin),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", void 0)

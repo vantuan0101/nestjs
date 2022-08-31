@@ -17,6 +17,8 @@ model Doccontent {
   Docs     Docs?    @relation(fields: [docsId], references: [id])
   createAt DateTime @default(now())
   updateAt DateTime @updatedAt
+
+  @@map("doccontents")
 }
 
 model Docs {
@@ -28,6 +30,8 @@ model Docs {
   updateAt   DateTime     @updatedAt
   CodeBlock  CodeBlock[]
   Doccontent Doccontent[]
+
+  @@map("docs")
 }
 
 model CodeBlock {
@@ -37,6 +41,8 @@ model CodeBlock {
   Docs     Docs?    @relation(fields: [DocsId], references: [id])
   createAt DateTime @default(now())
   updateAt DateTime @updatedAt
+
+  @@map("codeblocks")
 }
 
 model User {
@@ -50,6 +56,7 @@ model User {
   firstName String?
   lastName  String?
   bookmarks Bookmark[]
+  role      String     @default("user")
 
   @@map("users")
 }

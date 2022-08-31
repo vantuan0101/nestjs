@@ -16,22 +16,43 @@ let DocsService = class DocsService {
     constructor(prisma) {
         this.prisma = prisma;
     }
-    getAll() {
+    async getAllDocs(q, sort, limit, skip) {
         try {
-            const Docss = this.prisma.docs.findMany();
+            const Docs = await this.prisma.docs.findMany({
+                take: limit,
+                skip: skip,
+                orderBy: [
+                    sort && {
+                        name: sort,
+                    },
+                ],
+                include: {
+                    CodeBlock: true,
+                    Doccontent: true,
+                },
+                where: {
+                    OR: q && [
+                        {
+                            name: {
+                                contains: q,
+                            },
+                        },
+                    ],
+                },
+            });
             return {
                 status: 'success',
                 errCode: 0,
-                data: Docss,
+                data: Docs,
             };
         }
         catch (error) {
             throw new common_1.ForbiddenException('Credentails are invalid');
         }
     }
-    getOne(id) {
+    async getOneDocs(id) {
         try {
-            const Docs = this.prisma.docs.findUnique({
+            const Docs = await this.prisma.docs.findUnique({
                 where: { id },
             });
             return {
@@ -44,14 +65,13 @@ let DocsService = class DocsService {
             throw new common_1.ForbiddenException('Credentails are invalid');
         }
     }
-    create(dto) {
-        console.log(dto);
+    async createDocs(dto) {
         try {
-            const Docs = this.prisma.docs.create({
+            const Docs = await this.prisma.docs.create({
                 data: {
                     name: dto.name,
-                    title: dto.title,
-                    slug: dto.slug,
+                    title: dto.title.split(','),
+                    slug: dto.slug.split(','),
                 },
             });
             return Docs;
@@ -60,12 +80,17 @@ let DocsService = class DocsService {
             throw new common_1.ForbiddenException('Credentails are invalid');
         }
     }
-    update(id, dto) {
-        console.log(dto);
+    async updateDocs(id, dto) {
+        var _a, _b;
+        const data = {
+            name: dto === null || dto === void 0 ? void 0 : dto.name,
+            title: (_a = dto === null || dto === void 0 ? void 0 : dto.title) === null || _a === void 0 ? void 0 : _a.split(','),
+            slug: (_b = dto === null || dto === void 0 ? void 0 : dto.slug) === null || _b === void 0 ? void 0 : _b.split(','),
+        };
         try {
-            const Docs = this.prisma.docs.update({
+            const Docs = await this.prisma.docs.update({
                 where: { id },
-                data: {},
+                data,
             });
             return {
                 status: 'success',
@@ -77,7 +102,7 @@ let DocsService = class DocsService {
             throw new common_1.ForbiddenException('Credentails are invalid');
         }
     }
-    delete(id) {
+    async deleteDocs(id) {
         return `deleted Docs service with id: ${id}`;
     }
 };

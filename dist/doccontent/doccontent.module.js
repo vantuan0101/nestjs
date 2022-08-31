@@ -9,11 +9,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.DoccontentModule = void 0;
 const common_1 = require("@nestjs/common");
 const doccontent_service_1 = require("./doccontent.service");
+const doccontent_controller_1 = require("./doccontent.controller");
 let DoccontentModule = class DoccontentModule {
 };
 DoccontentModule = __decorate([
     (0, common_1.Module)({
-        providers: [doccontent_service_1.DoccontentService]
+        providers: [doccontent_service_1.DoccontentService],
+        controllers: [doccontent_controller_1.DoccontentController]
     })
 ], DoccontentModule);
 exports.DoccontentModule = DoccontentModule;

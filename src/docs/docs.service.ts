@@ -4,29 +4,41 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { DocsDto } from './dto';
+import { CreateDocs } from './interface';
 
 @Injectable()
 export class DocsService {
   constructor(private prisma: PrismaService) {}
-  getAll() {
+  async getAllDocs(
+    q?: string,
+    sort?: string,
+    limit?: number,
+    skip?: number,
+  ) {
     try {
-      const Docss = this.prisma.docs.findMany();
-      return {
-        status: 'success',
-        errCode: 0,
-        data: Docss,
-      };
-    } catch (error) {
-      throw new ForbiddenException(
-        'Credentails are invalid',
-      );
-    }
-  }
-  getOne(id: number) {
-    try {
-      const Docs = this.prisma.docs.findUnique({
-        where: { id },
-      });
+      const Docs =
+        await this.prisma.docs.findMany({
+          take: limit,
+          skip: skip,
+          orderBy: [
+            sort && {
+              name: sort as 'asc' | 'desc',
+            },
+          ],
+          include: {
+            CodeBlock: true,
+            Doccontent: true,
+          },
+          where: {
+            OR: q && [
+              {
+                name: {
+                  contains: q,
+                },
+              },
+            ],
+          },
+        });
       return {
         status: 'success',
         errCode: 0,
@@ -38,15 +50,31 @@ export class DocsService {
       );
     }
   }
-  create(dto: DocsDto) {
-    console.log(dto);
-
+  async getOneDocs(id: number) {
     try {
-      const Docs = this.prisma.docs.create({
+      const Docs =
+        await this.prisma.docs.findUnique({
+          where: { id },
+        });
+      return {
+        status: 'success',
+        errCode: 0,
+        data: Docs,
+      };
+    } catch (error) {
+      throw new ForbiddenException(
+        'Credentails are invalid',
+      );
+    }
+  }
+  async createDocs(dto: DocsDto) {
+    // console.log(dto);
+    try {
+      const Docs = await this.prisma.docs.create({
         data: {
           name: dto.name,
-          title: dto.title,
-          slug: dto.slug,
+          title: dto.title.split(','),
+          slug: dto.slug.split(','),
         },
       });
       return Docs;
@@ -56,12 +84,18 @@ export class DocsService {
       );
     }
   }
-  update(id: number, dto: DocsDto) {
-    console.log(dto);
+  async updateDocs(id: number, dto: CreateDocs) {
+    // console.log(dto);
+    const data = {
+      name: dto?.name,
+      title: dto?.title?.split(','),
+      slug: dto?.slug?.split(','),
+    };
+
     try {
-      const Docs = this.prisma.docs.update({
+      const Docs = await this.prisma.docs.update({
         where: { id },
-        data: {},
+        data,
       });
       return {
         status: 'success',
@@ -75,7 +109,7 @@ export class DocsService {
     }
   }
 
-  delete(id: number) {
+  async deleteDocs(id: number) {
     return `deleted Docs service with id: ${id}`;
   }
 }

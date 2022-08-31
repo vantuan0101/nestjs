@@ -14,7 +14,6 @@ async function bootstrap() {
       'The list of all APIs of the application. This is a sample description',
     )
     .setVersion('1.0')
-    .setBasePath('api')
     .addBearerAuth()
     .build();
   app.useGlobalPipes(
