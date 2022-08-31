@@ -27,7 +27,6 @@ export class DocsService {
           ],
           include: {
             CodeBlock: true,
-            Doccontent: true,
           },
           where: {
             OR: q && [
@@ -55,6 +54,9 @@ export class DocsService {
       const Docs =
         await this.prisma.docs.findUnique({
           where: { id },
+          include: {
+            CodeBlock: true,
+          },
         });
       return {
         status: 'success',
@@ -110,6 +112,18 @@ export class DocsService {
   }
 
   async deleteDocs(id: number) {
-    return `deleted Docs service with id: ${id}`;
+    try {
+      await this.prisma.docs.delete({
+        where: { id },
+      });
+      return {
+        status: 'success',
+        errCode: 0,
+      };
+    } catch (error) {
+      throw new ForbiddenException(
+        'Credentails are invalid',
+      );
+    }
   }
 }

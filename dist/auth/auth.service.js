@@ -16,11 +16,14 @@ const argon = require("argon2");
 const runtime_1 = require("@prisma/client/runtime");
 const config_1 = require("@nestjs/config");
 const prisma_service_1 = require("../prisma/prisma.service");
+const mail_service_1 = require("../mail/mail.service");
+const html_to_text_1 = require("html-to-text");
 let AuthService = class AuthService {
-    constructor(jwt, prisma, config) {
+    constructor(jwt, prisma, config, mailService) {
         this.jwt = jwt;
         this.prisma = prisma;
         this.config = config;
+        this.mailService = mailService;
     }
     async signup(dto) {
         try {
@@ -78,12 +81,93 @@ let AuthService = class AuthService {
             access_token: token,
         };
     }
+    async verifyToken(token) {
+        try {
+            const payload = await this.jwt.verifyAsync(token, {
+                secret: this.config.get('JWT_SECRET'),
+            });
+            return payload;
+        }
+        catch (error) {
+            throw new common_1.ForbiddenException(error);
+        }
+    }
+    async forgotPassword(dto) {
+        try {
+            const user = await this.prisma.user.findUnique({
+                where: {
+                    email: dto.email,
+                },
+            });
+            if (!user) {
+                throw new common_1.ForbiddenException('Credentails are invalid');
+            }
+            const token = await this.signToken(user.id, user.email);
+            const url = `${this.config.get('BASE_URL')}/api/v1/reset-password?token=${token.access_token}`;
+            const html = `<table width="600" align="center" cellpadding="0" cellspacing="0" border="0">
+      <tr>
+          <td>
+              <![endif]-->
+              <table class="content" align="center" cellpadding="0" cellspacing="0" border="0">
+                  <tr>
+                      <td>
+                          <a href="${url}">Click here</a> to reset your password.
+                      </td>
+                  </tr>
+              </table>
+              <!--[if (gte mso 9)|(IE)]>
+          </td>
+      </tr>
+  </table>`;
+            const htmlContent = (0, html_to_text_1.convert)(html, {
+                wordwrap: 130,
+            });
+            const mail = {
+                to: user.email,
+                subject: 'Reset Password',
+                htmlContent,
+            };
+            await this.mailService.sendUserConfirmation(mail);
+            return {
+                message: 'Email sent',
+                access_token: token,
+            };
+        }
+        catch (error) {
+            throw new common_1.ForbiddenException(error);
+        }
+    }
+    async resetPassword(password, token) {
+        try {
+            const payload = await this.verifyToken(token);
+            const user = await this.prisma.user.findUnique({
+                where: {
+                    email: payload.email,
+                },
+            });
+            const hash = await argon.hash(password);
+            const updatedUser = await this.prisma.user.update({
+                where: {
+                    id: user.id,
+                },
+                data: {
+                    hash,
+                },
+            });
+            delete updatedUser.hash;
+            return updatedUser;
+        }
+        catch (error) {
+            throw new common_1.ForbiddenException(error);
+        }
+    }
 };
 AuthService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [jwt_1.JwtService,
         prisma_service_1.PrismaService,
-        config_1.ConfigService])
+        config_1.ConfigService,
+        mail_service_1.MailService])
 ], AuthService);
 exports.AuthService = AuthService;
 //# sourceMappingURL=auth.service.js.map

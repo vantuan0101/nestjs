@@ -12,6 +12,7 @@ const jwt_1 = require("@nestjs/jwt");
 const auth_controller_1 = require("./auth.controller");
 const auth_service_1 = require("./auth.service");
 const passport_1 = require("@nestjs/passport");
+const mail_module_1 = require("../mail/mail.module");
 let AuthModule = class AuthModule {
 };
 AuthModule = __decorate([
@@ -19,6 +20,7 @@ AuthModule = __decorate([
         imports: [
             jwt_1.JwtModule.register({}),
             passport_1.PassportModule,
+            mail_module_1.MailModule,
         ],
         controllers: [auth_controller_1.AuthController],
         providers: [auth_service_1.AuthService],

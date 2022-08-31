@@ -9,13 +9,14 @@ export declare class DocsService {
         errCode: number;
         data: (import(".prisma/client").Docs & {
             CodeBlock: import(".prisma/client").CodeBlock[];
-            Doccontent: import(".prisma/client").Doccontent[];
         })[];
     }>;
     getOneDocs(id: number): Promise<{
         status: string;
         errCode: number;
-        data: import(".prisma/client").Docs;
+        data: import(".prisma/client").Docs & {
+            CodeBlock: import(".prisma/client").CodeBlock[];
+        };
     }>;
     createDocs(dto: DocsDto): Promise<import(".prisma/client").Docs>;
     updateDocs(id: number, dto: CreateDocs): Promise<{
@@ -23,5 +24,8 @@ export declare class DocsService {
         errCode: number;
         data: import(".prisma/client").Docs;
     }>;
-    deleteDocs(id: number): Promise<string>;
+    deleteDocs(id: number): Promise<{
+        status: string;
+        errCode: number;
+    }>;
 }

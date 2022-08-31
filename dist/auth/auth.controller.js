@@ -26,6 +26,12 @@ let AuthController = class AuthController {
     signin(dto) {
         return this.authService.signin(dto);
     }
+    forgotPassword(dto) {
+        return this.authService.forgotPassword(dto);
+    }
+    resetPassword(password, token) {
+        return this.authService.resetPassword(password, token);
+    }
 };
 __decorate([
     (0, common_1.Post)('signup'),
@@ -41,6 +47,21 @@ __decorate([
     __metadata("design:paramtypes", [dto_1.AuthDto]),
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "signin", null);
+__decorate([
+    (0, common_1.Post)('forgot-password'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [dto_1.ForgotPassDto]),
+    __metadata("design:returntype", void 0)
+], AuthController.prototype, "forgotPassword", null);
+__decorate([
+    (0, common_1.Post)('reset-password'),
+    __param(0, (0, common_1.Body)('password')),
+    __param(1, (0, common_1.Query)('token')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", void 0)
+], AuthController.prototype, "resetPassword", null);
 AuthController = __decorate([
     (0, common_1.Controller)('auth'),
     __metadata("design:paramtypes", [auth_service_1.AuthService])

@@ -2,11 +2,12 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
 import { AuthModule } from './auth/auth.module';
-import { BookmarkModule } from './bookmark/bookmark.module';
-import { DoccontentModule } from './doccontent/doccontent.module';
+import { DocCodeModule } from './DocCode/docCode.module';
 import { DocsModule } from './docs/docs.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { UserModule } from './user/user.module';
+import { MailService } from './mail/mail.service';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -14,11 +15,12 @@ import { UserModule } from './user/user.module';
       isGlobal: true,
     }),
     AuthModule,
-    BookmarkModule,
     UserModule,
     PrismaModule,
     DocsModule,
-    DoccontentModule,
+    DocCodeModule,
+    // MailModule,
   ],
+  // providers: [MailService],
 })
 export class AppModule {}

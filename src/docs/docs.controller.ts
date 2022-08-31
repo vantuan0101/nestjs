@@ -68,7 +68,7 @@ export class DocsController {
     @Body()
     dto: CreateDocs,
   ) {
-    console.log(dto);
+    // console.log(dto);
     return this.DocsService.updateDocs(id, dto);
   }
   @Delete(':id')

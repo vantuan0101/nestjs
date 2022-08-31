@@ -10,8 +10,7 @@ exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const auth_module_1 = require("./auth/auth.module");
-const bookmark_module_1 = require("./bookmark/bookmark.module");
-const doccontent_module_1 = require("./doccontent/doccontent.module");
+const docCode_module_1 = require("./DocCode/docCode.module");
 const docs_module_1 = require("./docs/docs.module");
 const prisma_module_1 = require("./prisma/prisma.module");
 const user_module_1 = require("./user/user.module");
@@ -24,11 +23,10 @@ AppModule = __decorate([
                 isGlobal: true,
             }),
             auth_module_1.AuthModule,
-            bookmark_module_1.BookmarkModule,
             user_module_1.UserModule,
             prisma_module_1.PrismaModule,
             docs_module_1.DocsModule,
-            doccontent_module_1.DoccontentModule,
+            docCode_module_1.DocCodeModule,
         ],
     })
 ], AppModule);

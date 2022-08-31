@@ -34,7 +34,6 @@ let DocsController = class DocsController {
         return this.DocsService.createDocs(dto);
     }
     update(id, dto) {
-        console.log(dto);
         return this.DocsService.updateDocs(id, dto);
     }
     delete(id) {
