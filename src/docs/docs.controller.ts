@@ -48,10 +48,19 @@ export class DocsController {
       skip,
     );
   }
-  @Get(':id')
-  getOne(@Param('id', ParseIntPipe) id: number) {
-    // console.log(id, typeof id);
-    return this.DocsService.getOneDocs(id);
+  // @Get(':id')
+  // getOne(@Param('id', ParseIntPipe) id: number) {
+  //   // console.log(id, typeof id);
+  //   return this.DocsService.getOneDocs(id);
+  // }
+  @Get(':nameApi')
+  getOneByName(
+    @Param() nameApi: { nameApi: string },
+  ) {
+    // console.log(nameApi);
+    return this.DocsService.getOneDocByName(
+      nameApi.nameApi,
+    );
   }
 
   @Post()
@@ -61,8 +70,8 @@ export class DocsController {
     return this.DocsService.createDocs(dto);
   }
   @Patch(':id')
-  @UseGuards(JwtGuard, RolesGuard)
-  @Roles(RoleType.Admin)
+  // @UseGuards(JwtGuard, RolesGuard)
+  // @Roles(RoleType.Admin)
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body()
@@ -72,8 +81,8 @@ export class DocsController {
     return this.DocsService.updateDocs(id, dto);
   }
   @Delete(':id')
-  @UseGuards(JwtGuard, RolesGuard)
-  @Roles(RoleType.Admin)
+  // @UseGuards(JwtGuard, RolesGuard)
+  // @Roles(RoleType.Admin)
   delete(@Param('id', ParseIntPipe) id: number) {
     return this.DocsService.deleteDocs(+id);
   }

@@ -1,6 +1,7 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import * as cookieParser from 'cookie-parser';
 import {
   SwaggerModule,
   DocumentBuilder,
@@ -21,7 +22,11 @@ async function bootstrap() {
       whitelist: true, // true = only validate fields that are defined in the DTO
     }),
   );
-  app.enableCors();
+  app.use(cookieParser());
+  app.enableCors({
+    credentials: true,
+    origin: true,
+  });
   const document = SwaggerModule.createDocument(
     app,
     options,

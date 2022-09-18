@@ -23,14 +23,17 @@ let AuthController = class AuthController {
     signup(dto) {
         return this.authService.signup(dto);
     }
-    signin(dto) {
-        return this.authService.signin(dto);
+    signin(dto, res) {
+        return this.authService.signin(dto, res);
     }
     forgotPassword(dto) {
         return this.authService.forgotPassword(dto);
     }
     resetPassword(password, token) {
         return this.authService.resetPassword(password, token);
+    }
+    refreshToken(request) {
+        return this.authService.refreshToken(request.cookies.refresh_token);
     }
 };
 __decorate([
@@ -43,8 +46,9 @@ __decorate([
 __decorate([
     (0, common_1.Post)('signin'),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Res)({ passthrough: true })),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [dto_1.AuthDto]),
+    __metadata("design:paramtypes", [dto_1.LoginDto, Object]),
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "signin", null);
 __decorate([
@@ -62,6 +66,13 @@ __decorate([
     __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "resetPassword", null);
+__decorate([
+    (0, common_1.Post)('refresh-token'),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], AuthController.prototype, "refreshToken", null);
 AuthController = __decorate([
     (0, common_1.Controller)('auth'),
     __metadata("design:paramtypes", [auth_service_1.AuthService])

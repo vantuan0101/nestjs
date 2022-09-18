@@ -27,8 +27,8 @@ let DocsController = class DocsController {
     getAll(q, sort, limit, skip) {
         return this.DocsService.getAllDocs(q, sort, limit, skip);
     }
-    getOne(id) {
-        return this.DocsService.getOneDocs(id);
+    getOneByName(nameApi) {
+        return this.DocsService.getOneDocByName(nameApi.nameApi);
     }
     create(dto) {
         return this.DocsService.createDocs(dto);
@@ -51,12 +51,12 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], DocsController.prototype, "getAll", null);
 __decorate([
-    (0, common_1.Get)(':id'),
-    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    (0, common_1.Get)(':nameApi'),
+    __param(0, (0, common_1.Param)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
-], DocsController.prototype, "getOne", null);
+], DocsController.prototype, "getOneByName", null);
 __decorate([
     (0, common_1.Post)(),
     (0, common_1.UseGuards)(jwt_guard_1.JwtGuard, roles_guard_1.RolesGuard),
@@ -68,8 +68,6 @@ __decorate([
 ], DocsController.prototype, "create", null);
 __decorate([
     (0, common_1.Patch)(':id'),
-    (0, common_1.UseGuards)(jwt_guard_1.JwtGuard, roles_guard_1.RolesGuard),
-    (0, roles_decorator_1.Roles)(roles_enum_1.RoleType.Admin),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -78,8 +76,6 @@ __decorate([
 ], DocsController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(':id'),
-    (0, common_1.UseGuards)(jwt_guard_1.JwtGuard, roles_guard_1.RolesGuard),
-    (0, roles_decorator_1.Roles)(roles_enum_1.RoleType.Admin),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),

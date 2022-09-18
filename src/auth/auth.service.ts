@@ -8,9 +8,14 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { ConfigService } from '@nestjs/config';
 
 import { PrismaService } from '../prisma/prisma.service';
-import { AuthDto, ForgotPassDto } from './dto';
+import {
+  AuthDto,
+  ForgotPassDto,
+  LoginDto,
+} from './dto';
 import { MailService } from '../mail/mail.service';
 import { convert } from 'html-to-text';
+import { Response, Request } from 'express';
 @Injectable()
 export class AuthService {
   constructor(
@@ -26,6 +31,8 @@ export class AuthService {
       // Save new user in the db
       const user = await this.prisma.user.create({
         data: {
+          firstName: dto.firstName,
+          lastName: dto.lastName,
           email: dto.email,
           hash,
         },
@@ -53,7 +60,7 @@ export class AuthService {
     }
   }
 
-  async signin(dto: AuthDto) {
+  async signin(dto: LoginDto, res: Response) {
     try {
       // find email in the db
       const user =
@@ -79,9 +86,29 @@ export class AuthService {
           'Credentails are invalid',
         );
       }
-      // delete user.hash;
+      delete user.hash;
+      delete user.createAt;
+      delete user.updateAt;
+      delete user.id;
       // return user;
-      return this.signToken(user.id, user.email);
+      const access_token = await this.signToken(
+        user.id,
+        user.email,
+      );
+      const refresh_token =
+        await this.signRefreshToken(
+          user.id,
+          user.email,
+        );
+      // console.log(refresh_token);
+      res.cookie('refresh_token', refresh_token);
+      return {
+        status: 'success',
+        data: {
+          user,
+          access_token,
+        },
+      };
     } catch (error) {
       throw new ForbiddenException(error);
     }
@@ -90,7 +117,7 @@ export class AuthService {
   async signToken(
     userId: number,
     email: string,
-  ): Promise<{ access_token: string }> {
+  ): Promise<string> {
     const payload = {
       sub: userId,
       email,
@@ -100,14 +127,37 @@ export class AuthService {
     const token = await this.jwt.signAsync(
       payload,
       {
-        expiresIn: '15m',
+        expiresIn: '1s',
+        // expiresIn: this.config.get(
+        //   'JWT_EXPIRES_IN',
+        // ),
         secret: secret,
       },
     );
 
-    return {
-      access_token: token,
+    return token;
+  }
+  async signRefreshToken(
+    userId: number,
+    email: string,
+  ): Promise<string> {
+    const payload = {
+      sub: userId,
+      email,
     };
+    const secret = this.config.get('JWT_SECRET');
+
+    const token = await this.jwt.signAsync(
+      payload,
+      {
+        expiresIn: this.config.get(
+          'JWT_REFRESH_EXPIRES_IN',
+        ),
+        secret: secret,
+      },
+    );
+
+    return token;
   }
 
   async verifyToken(token: string) {
@@ -145,9 +195,7 @@ export class AuthService {
       );
       const url = `${this.config.get(
         'BASE_URL',
-      )}/api/v1/reset-password?token=${
-        token.access_token
-      }`;
+      )}/api/v1/reset-password?token=${token}`;
       const html = `<table width="600" align="center" cellpadding="0" cellspacing="0" border="0">
       <tr>
           <td>
@@ -210,6 +258,22 @@ export class AuthService {
         });
       delete updatedUser.hash;
       return updatedUser;
+    } catch (error) {
+      throw new ForbiddenException(error);
+    }
+  }
+  async refreshToken(refresh_token: string) {
+    // console.log(refresh_token);
+    try {
+      const payload = await this.verifyToken(
+        refresh_token,
+      );
+      // console.log(payload);
+      const newToken = await this.signToken(
+        payload.sub,
+        payload.email,
+      );
+      return newToken;
     } catch (error) {
       throw new ForbiddenException(error);
     }

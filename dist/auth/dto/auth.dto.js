@@ -9,10 +9,18 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AuthDto = void 0;
+exports.RefreshTokenDto = exports.ResetPassDto = exports.ForgotPassDto = exports.LoginDto = exports.AuthDto = void 0;
 const class_validator_1 = require("class-validator");
 class AuthDto {
 }
+__decorate([
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], AuthDto.prototype, "firstName", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], AuthDto.prototype, "lastName", void 0);
 __decorate([
     (0, class_validator_1.IsEmail)(),
     (0, class_validator_1.IsNotEmpty)(),
@@ -24,4 +32,41 @@ __decorate([
     __metadata("design:type", String)
 ], AuthDto.prototype, "password", void 0);
 exports.AuthDto = AuthDto;
+class LoginDto {
+}
+__decorate([
+    (0, class_validator_1.IsEmail)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], LoginDto.prototype, "email", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], LoginDto.prototype, "password", void 0);
+exports.LoginDto = LoginDto;
+class ForgotPassDto {
+}
+__decorate([
+    (0, class_validator_1.IsEmail)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], ForgotPassDto.prototype, "email", void 0);
+exports.ForgotPassDto = ForgotPassDto;
+class ResetPassDto {
+}
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], ResetPassDto.prototype, "password", void 0);
+exports.ResetPassDto = ResetPassDto;
+class RefreshTokenDto {
+}
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], RefreshTokenDto.prototype, "token", void 0);
+exports.RefreshTokenDto = RefreshTokenDto;
 //# sourceMappingURL=auth.dto.js.map

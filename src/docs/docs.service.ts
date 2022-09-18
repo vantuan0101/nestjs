@@ -69,14 +69,38 @@ export class DocsService {
       );
     }
   }
+  async getOneDocByName(nameApi: string) {
+    try {
+      const Docs =
+        await this.prisma.docs.findFirst({
+          where: {
+            slug: nameApi,
+          },
+          include: {
+            CodeBlock: true,
+          },
+        });
+      return {
+        status: 'success',
+        errCode: 0,
+        data: Docs,
+      };
+    } catch (error) {
+      throw new ForbiddenException(
+        'Credentails are invalid',
+      );
+    }
+  }
   async createDocs(dto: DocsDto) {
     // console.log(dto);
     try {
       const Docs = await this.prisma.docs.create({
         data: {
           name: dto.name,
-          title: dto.title.split(','),
-          slug: dto.slug.split(','),
+          title: dto.title,
+          slug: dto.slug,
+          icon: dto.icon,
+          desc: dto.desc,
         },
       });
       return Docs;
@@ -90,8 +114,10 @@ export class DocsService {
     // console.log(dto);
     const data = {
       name: dto?.name,
-      title: dto?.title?.split(','),
-      slug: dto?.slug?.split(','),
+      title: dto?.title,
+      slug: dto?.slug,
+      icon: dto?.icon,
+      desc: dto?.desc,
     };
 
     try {

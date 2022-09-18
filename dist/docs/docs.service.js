@@ -67,13 +67,35 @@ let DocsService = class DocsService {
             throw new common_1.ForbiddenException('Credentails are invalid');
         }
     }
+    async getOneDocByName(nameApi) {
+        try {
+            const Docs = await this.prisma.docs.findFirst({
+                where: {
+                    slug: nameApi,
+                },
+                include: {
+                    CodeBlock: true,
+                },
+            });
+            return {
+                status: 'success',
+                errCode: 0,
+                data: Docs,
+            };
+        }
+        catch (error) {
+            throw new common_1.ForbiddenException('Credentails are invalid');
+        }
+    }
     async createDocs(dto) {
         try {
             const Docs = await this.prisma.docs.create({
                 data: {
                     name: dto.name,
-                    title: dto.title.split(','),
-                    slug: dto.slug.split(','),
+                    title: dto.title,
+                    slug: dto.slug,
+                    icon: dto.icon,
+                    desc: dto.desc,
                 },
             });
             return Docs;
@@ -83,11 +105,12 @@ let DocsService = class DocsService {
         }
     }
     async updateDocs(id, dto) {
-        var _a, _b;
         const data = {
             name: dto === null || dto === void 0 ? void 0 : dto.name,
-            title: (_a = dto === null || dto === void 0 ? void 0 : dto.title) === null || _a === void 0 ? void 0 : _a.split(','),
-            slug: (_b = dto === null || dto === void 0 ? void 0 : dto.slug) === null || _b === void 0 ? void 0 : _b.split(','),
+            title: dto === null || dto === void 0 ? void 0 : dto.title,
+            slug: dto === null || dto === void 0 ? void 0 : dto.slug,
+            icon: dto === null || dto === void 0 ? void 0 : dto.icon,
+            desc: dto === null || dto === void 0 ? void 0 : dto.desc,
         };
         try {
             const Docs = await this.prisma.docs.update({

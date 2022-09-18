@@ -15,6 +15,7 @@ import { JwtGuard } from '../auth/guard';
 import { Roles } from '../auth/guard/roles.decorator';
 import { RoleType } from '../shared/enum/roles.enum';
 import { DocCodeDto } from './dto';
+import { DocCodeEntry } from './entries/docCode.entries';
 
 @Controller('doc/code')
 export class DocCodeController {
@@ -33,17 +34,23 @@ export class DocCodeController {
   }
 
   @Post()
-  @UseGuards(JwtGuard, RolesGuard)
-  @Roles(RoleType.Admin)
+  // @UseGuards(JwtGuard, RolesGuard)
+  // @Roles(RoleType.Admin)
   create(@Body() dto: DocCodeDto) {
-    console.log(dto);
+    // console.log(dto);
     return this.DocCodeService.createDocCode(dto);
   }
   @Patch(':id')
-  @UseGuards(JwtGuard, RolesGuard)
-  @Roles(RoleType.Admin)
-  update(@Param('id', ParseIntPipe) id: number) {
-    return this.DocCodeService.updateDocCode(id);
+  // @UseGuards(JwtGuard, RolesGuard)
+  // @Roles(RoleType.Admin)
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: DocCodeEntry,
+  ) {
+    return this.DocCodeService.updateDocCode(
+      id,
+      dto,
+    );
   }
   @Delete(':id')
   @UseGuards(JwtGuard, RolesGuard)

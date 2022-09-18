@@ -30,6 +30,8 @@ let AuthService = class AuthService {
             const hash = await argon.hash(dto.password);
             const user = await this.prisma.user.create({
                 data: {
+                    firstName: dto.firstName,
+                    lastName: dto.lastName,
                     email: dto.email,
                     hash,
                 },
@@ -47,7 +49,7 @@ let AuthService = class AuthService {
             }
         }
     }
-    async signin(dto) {
+    async signin(dto, res) {
         try {
             const user = await this.prisma.user.findUnique({
                 where: {
@@ -61,7 +63,20 @@ let AuthService = class AuthService {
             if (!validPassword) {
                 throw new common_1.ForbiddenException('Credentails are invalid');
             }
-            return this.signToken(user.id, user.email);
+            delete user.hash;
+            delete user.createAt;
+            delete user.updateAt;
+            delete user.id;
+            const access_token = await this.signToken(user.id, user.email);
+            const refresh_token = await this.signRefreshToken(user.id, user.email);
+            res.cookie('refresh_token', refresh_token);
+            return {
+                status: 'success',
+                data: {
+                    user,
+                    access_token,
+                },
+            };
         }
         catch (error) {
             throw new common_1.ForbiddenException(error);
@@ -74,12 +89,22 @@ let AuthService = class AuthService {
         };
         const secret = this.config.get('JWT_SECRET');
         const token = await this.jwt.signAsync(payload, {
-            expiresIn: '15m',
+            expiresIn: '1s',
             secret: secret,
         });
-        return {
-            access_token: token,
+        return token;
+    }
+    async signRefreshToken(userId, email) {
+        const payload = {
+            sub: userId,
+            email,
         };
+        const secret = this.config.get('JWT_SECRET');
+        const token = await this.jwt.signAsync(payload, {
+            expiresIn: this.config.get('JWT_REFRESH_EXPIRES_IN'),
+            secret: secret,
+        });
+        return token;
     }
     async verifyToken(token) {
         try {
@@ -103,7 +128,7 @@ let AuthService = class AuthService {
                 throw new common_1.ForbiddenException('Credentails are invalid');
             }
             const token = await this.signToken(user.id, user.email);
-            const url = `${this.config.get('BASE_URL')}/api/v1/reset-password?token=${token.access_token}`;
+            const url = `${this.config.get('BASE_URL')}/api/v1/reset-password?token=${token}`;
             const html = `<table width="600" align="center" cellpadding="0" cellspacing="0" border="0">
       <tr>
           <td>
@@ -156,6 +181,16 @@ let AuthService = class AuthService {
             });
             delete updatedUser.hash;
             return updatedUser;
+        }
+        catch (error) {
+            throw new common_1.ForbiddenException(error);
+        }
+    }
+    async refreshToken(refresh_token) {
+        try {
+            const payload = await this.verifyToken(refresh_token);
+            const newToken = await this.signToken(payload.sub, payload.email);
+            return newToken;
         }
         catch (error) {
             throw new common_1.ForbiddenException(error);

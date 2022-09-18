@@ -18,6 +18,13 @@ export declare class DocsService {
             CodeBlock: import(".prisma/client").CodeBlock[];
         };
     }>;
+    getOneDocByName(nameApi: string): Promise<{
+        status: string;
+        errCode: number;
+        data: import(".prisma/client").Docs & {
+            CodeBlock: import(".prisma/client").CodeBlock[];
+        };
+    }>;
     createDocs(dto: DocsDto): Promise<import(".prisma/client").Docs>;
     updateDocs(id: number, dto: CreateDocs): Promise<{
         status: string;

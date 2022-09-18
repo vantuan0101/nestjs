@@ -10,10 +10,25 @@ export class DocCodeDto {
   code: string;
 
   @IsNotEmpty()
-  @IsNumber()
+  // @IsNumber()
   DocsId: number;
 
   @IsNotEmpty()
   @IsString()
   content: string;
+  @IsNotEmpty()
+  @IsString()
+  icon: string;
+  @IsNotEmpty()
+  @IsString()
+  title: string;
+  @IsNotEmpty()
+  @IsString()
+  slug: string;
+  @IsNotEmpty()
+  @IsString()
+  note: string;
+  @IsNotEmpty()
+  @IsString()
+  outPut: string;
 }

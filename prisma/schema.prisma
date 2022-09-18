@@ -12,9 +12,11 @@ datasource db {
 
 model Docs {
   id        Int         @id @default(autoincrement())
+  icon      String
   name      String
-  title     String[]
-  slug      String[]
+  title     String
+  desc      String
+  slug      String
   createAt  DateTime    @default(now())
   updateAt  DateTime    @updatedAt
   CodeBlock CodeBlock[]
@@ -24,8 +26,13 @@ model Docs {
 
 model CodeBlock {
   id       Int      @id @default(autoincrement())
+  icon     String
+  title    String
+  slug     String
   content  String
   code     String
+  note     String?
+  outPut   String
   DocsId   Int?
   Docs     Docs?    @relation(fields: [DocsId], references: [id])
   createAt DateTime @default(now())

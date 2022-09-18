@@ -11,7 +11,9 @@ export declare class DocsController {
             CodeBlock: import(".prisma/client").CodeBlock[];
         })[];
     }>;
-    getOne(id: number): Promise<{
+    getOneByName(nameApi: {
+        nameApi: string;
+    }): Promise<{
         status: string;
         errCode: number;
         data: import(".prisma/client").Docs & {
