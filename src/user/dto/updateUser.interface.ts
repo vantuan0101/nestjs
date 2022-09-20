@@ -3,4 +3,6 @@ export interface UpdateUserDto {
   password?: string;
   firstName?: string;
   lastName?: string;
+  avatar?: string;
+  publicIdAvatar?: string;
 }

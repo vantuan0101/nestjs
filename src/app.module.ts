@@ -8,6 +8,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { UserModule } from './user/user.module';
 import { MailService } from './mail/mail.service';
 import { MailModule } from './mail/mail.module';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { MailModule } from './mail/mail.module';
     PrismaModule,
     DocsModule,
     DocCodeModule,
+    CloudinaryModule,
     // MailModule,
   ],
   // providers: [MailService],

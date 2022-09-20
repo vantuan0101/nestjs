@@ -32,7 +32,15 @@ export class AuthController {
     @Body() dto: LoginDto,
     @Res({ passthrough: true }) res: Response,
   ) {
+    console.log(dto);
+
     return this.authService.signin(dto, res);
+  }
+  @Get('logout')
+  logout(
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    return this.authService.logout(res);
   }
   @Post('forgot-password')
   forgotPassword(@Body() dto: ForgotPassDto) {

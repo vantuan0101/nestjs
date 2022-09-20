@@ -1,3 +1,4 @@
+import { CloudinaryService } from './../cloudinary/cloudinary.service';
 import { DocCodeDto } from './dto';
 import { PrismaService } from '../prisma/prisma.service';
 import {
@@ -8,7 +9,10 @@ import { DocCodeEntry } from './entries/docCode.entries';
 
 @Injectable()
 export class DocCodeService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private cloudinary: CloudinaryService,
+  ) {}
 
   async getAllDocCode() {
     try {
@@ -44,16 +48,23 @@ export class DocCodeService {
       );
     }
   }
-  async createDocCode(dto: DocCodeDto) {
+  async createDocCode(
+    dto: DocCodeDto,
+    files: any,
+  ) {
     // console.log(dto);
     try {
+      const icon =
+        await this.cloudinary.uploadCloud(
+          files.icon,
+        );
       const docCode =
         await this.prisma.codeBlock.create({
           data: {
             code: dto.code,
             DocsId: +dto.DocsId,
             content: dto.content,
-            icon: dto.icon,
+            icon: icon,
             title: dto.title,
             slug: dto.slug,
             note: dto.note,
@@ -74,8 +85,22 @@ export class DocCodeService {
   async updateDocCode(
     id: number,
     dto: DocCodeEntry,
+    files: any,
   ) {
     try {
+      const { data } = await this.getOneDocCode(
+        id,
+      );
+      if (files.icon) {
+        await this.cloudinary.deleteImage(
+          data.icon,
+        );
+        const icon =
+          await this.cloudinary.uploadCloud(
+            files.icon,
+          );
+        dto.icon = icon;
+      }
       const docCode =
         await this.prisma.codeBlock.update({
           where: {
@@ -105,6 +130,13 @@ export class DocCodeService {
   }
   async deleteDocCode(id: number) {
     try {
+      const { data } = await this.getOneDocCode(
+        id,
+      );
+      await this.cloudinary.deleteImage(
+        data.icon,
+      );
+
       await this.prisma.codeBlock.delete({
         where: {
           id,

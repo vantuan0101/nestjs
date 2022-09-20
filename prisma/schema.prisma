@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -12,13 +9,15 @@ datasource db {
 
 model Docs {
   id        Int         @id @default(autoincrement())
-  icon      String
   name      String
   title     String
-  desc      String
   slug      String
   createAt  DateTime    @default(now())
   updateAt  DateTime    @updatedAt
+  desc      String
+  image     Json[]
+  demoList  Json[]
+  icon      Json[]
   CodeBlock CodeBlock[]
 
   @@map("docs")
@@ -26,32 +25,31 @@ model Docs {
 
 model CodeBlock {
   id       Int      @id @default(autoincrement())
-  icon     String
-  title    String
-  slug     String
-  content  String
-  code     String
-  note     String?
-  outPut   String
   DocsId   Int?
-  Docs     Docs?    @relation(fields: [DocsId], references: [id])
   createAt DateTime @default(now())
   updateAt DateTime @updatedAt
+  content  String
+  icon     Json[]
+  note     String?
+  outPut   String
+  slug     String
+  title    String
+  code     String
+  Docs     Docs?    @relation(fields: [DocsId], references: [id])
 
   @@map("codeblocks")
 }
 
 model User {
-  id       Int      @id @default(autoincrement())
-  createAt DateTime @default(now())
-  updateAt DateTime @updatedAt
-
-  email String @unique
-  hash  String
-
+  id        Int      @id @default(autoincrement())
+  createAt  DateTime @default(now())
+  updateAt  DateTime @updatedAt
+  email     String   @unique
+  hash      String
   firstName String?
   lastName  String?
-  role      String  @default("user")
+  avatar    Json[]
+  role      String   @default("user")
 
   @@map("users")
 }

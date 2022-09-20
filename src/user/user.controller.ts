@@ -1,3 +1,4 @@
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { UserService } from './user.service';
 import { RolesGuard } from '../auth/guard/roles.guard';
 import {
@@ -10,7 +11,9 @@ import {
   Patch,
   Post,
   Req,
+  UploadedFiles,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';

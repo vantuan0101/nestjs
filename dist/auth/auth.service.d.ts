@@ -18,6 +18,10 @@ export declare class AuthService {
             access_token: string;
         };
     }>;
+    logout(res: Response): Promise<{
+        status: string;
+        message: string;
+    }>;
     signToken(userId: number, email: string): Promise<string>;
     signRefreshToken(userId: number, email: string): Promise<string>;
     verifyToken(token: string): Promise<any>;

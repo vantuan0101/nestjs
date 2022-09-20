@@ -16,9 +16,7 @@ export class DocCodeDto {
   @IsNotEmpty()
   @IsString()
   content: string;
-  @IsNotEmpty()
-  @IsString()
-  icon: string;
+
   @IsNotEmpty()
   @IsString()
   title: string;

@@ -24,7 +24,11 @@ let AuthController = class AuthController {
         return this.authService.signup(dto);
     }
     signin(dto, res) {
+        console.log(dto);
         return this.authService.signin(dto, res);
+    }
+    logout(res) {
+        return this.authService.logout(res);
     }
     forgotPassword(dto) {
         return this.authService.forgotPassword(dto);
@@ -51,6 +55,13 @@ __decorate([
     __metadata("design:paramtypes", [dto_1.LoginDto, Object]),
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "signin", null);
+__decorate([
+    (0, common_1.Get)('logout'),
+    __param(0, (0, common_1.Res)({ passthrough: true })),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], AuthController.prototype, "logout", null);
 __decorate([
     (0, common_1.Post)('forgot-password'),
     __param(0, (0, common_1.Body)()),

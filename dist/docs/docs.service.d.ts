@@ -1,9 +1,11 @@
+import { CloudinaryService } from './../cloudinary/cloudinary.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { DocsDto } from './dto';
 import { CreateDocs } from './interface';
 export declare class DocsService {
     private prisma;
-    constructor(prisma: PrismaService);
+    cloudinary: CloudinaryService;
+    constructor(prisma: PrismaService, cloudinary: CloudinaryService);
     getAllDocs(q?: string, sort?: string, limit?: number, skip?: number): Promise<{
         status: string;
         errCode: number;
@@ -25,8 +27,8 @@ export declare class DocsService {
             CodeBlock: import(".prisma/client").CodeBlock[];
         };
     }>;
-    createDocs(dto: DocsDto): Promise<import(".prisma/client").Docs>;
-    updateDocs(id: number, dto: CreateDocs): Promise<{
+    createDocs(dto: DocsDto, files: any): Promise<import(".prisma/client").Docs>;
+    updateDocs(id: number, dto: CreateDocs, files: any): Promise<{
         status: string;
         errCode: number;
         data: import(".prisma/client").Docs;

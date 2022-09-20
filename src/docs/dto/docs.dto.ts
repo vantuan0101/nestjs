@@ -13,9 +13,7 @@ export class DocsDto {
   @IsString()
   @IsNotEmpty()
   slug: string;
-  @IsString()
-  @IsNotEmpty()
-  icon: string;
+
   @IsString()
   @IsNotEmpty()
   desc: string;

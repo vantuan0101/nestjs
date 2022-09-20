@@ -9,8 +9,14 @@ import {
   Patch,
   Post,
   Query,
+  UploadedFiles,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import {
+  FileFieldsInterceptor,
+  FileInterceptor,
+} from '@nestjs/platform-express';
 import { Roles } from '../auth/guard/roles.decorator';
 import { RolesGuard } from '../auth/guard/roles.guard';
 import { RoleType } from '../shared/enum/roles.enum';
@@ -48,12 +54,12 @@ export class DocsController {
       skip,
     );
   }
-  // @Get(':id')
-  // getOne(@Param('id', ParseIntPipe) id: number) {
-  //   // console.log(id, typeof id);
-  //   return this.DocsService.getOneDocs(id);
-  // }
-  @Get(':nameApi')
+  @Get(':id')
+  getOne(@Param('id', ParseIntPipe) id: number) {
+    // console.log(id, typeof id);
+    return this.DocsService.getOneDocs(id);
+  }
+  @Get('name/:nameApi')
   getOneByName(
     @Param() nameApi: { nameApi: string },
   ) {
@@ -66,23 +72,57 @@ export class DocsController {
   @Post()
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(RoleType.Admin)
-  create(@Body() dto: DocsDto) {
-    return this.DocsService.createDocs(dto);
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'image', maxCount: 1 },
+      { name: 'demoList', maxCount: 2 },
+      { name: 'icon', maxCount: 1 },
+    ]),
+  )
+  create(
+    @Body() dto: DocsDto,
+    @UploadedFiles()
+    files: {
+      image?: Express.Multer.File[];
+      demoList?: Express.Multer.File[];
+      icon?: Express.Multer.File[];
+    },
+  ) {
+    return this.DocsService.createDocs(
+      dto,
+      files,
+    );
   }
   @Patch(':id')
-  // @UseGuards(JwtGuard, RolesGuard)
-  // @Roles(RoleType.Admin)
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(RoleType.Admin)
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'image', maxCount: 1 },
+      { name: 'demoList', maxCount: 2 },
+      { name: 'icon', maxCount: 1 },
+    ]),
+  )
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body()
     dto: CreateDocs,
+    @UploadedFiles()
+    files: {
+      image?: Express.Multer.File[];
+      demoList?: Express.Multer.File[];
+      icon?: Express.Multer.File[];
+    },
   ) {
-    // console.log(dto);
-    return this.DocsService.updateDocs(id, dto);
+    return this.DocsService.updateDocs(
+      id,
+      dto,
+      files,
+    );
   }
   @Delete(':id')
-  // @UseGuards(JwtGuard, RolesGuard)
-  // @Roles(RoleType.Admin)
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(RoleType.Admin)
   delete(@Param('id', ParseIntPipe) id: number) {
     return this.DocsService.deleteDocs(+id);
   }

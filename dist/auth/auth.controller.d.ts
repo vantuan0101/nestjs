@@ -12,6 +12,10 @@ export declare class AuthController {
             access_token: string;
         };
     }>;
+    logout(res: Response): Promise<{
+        status: string;
+        message: string;
+    }>;
     forgotPassword(dto: ForgotPassDto): Promise<{
         message: string;
         access_token: string;

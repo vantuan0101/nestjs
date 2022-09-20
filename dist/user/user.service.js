@@ -31,7 +31,6 @@ let UserService = class UserService {
         }
     }
     async createUser(user) {
-        console.log(user);
         try {
             const hash = await argon.hash(user.password);
             const users = await this.prisma.user.create({
@@ -40,6 +39,7 @@ let UserService = class UserService {
                     hash,
                     firstName: user.firstName,
                     lastName: user.lastName,
+                    avatar: 'user.avatar',
                 },
             });
             return {
@@ -53,7 +53,6 @@ let UserService = class UserService {
         }
     }
     async updateUser(id, user) {
-        console.log(user);
         try {
             const hash = await argon.hash(user === null || user === void 0 ? void 0 : user.password);
             const users = await this.prisma.user.update({
@@ -63,6 +62,7 @@ let UserService = class UserService {
                     lastName: user.lastName,
                     email: user.email,
                     hash,
+                    avatar: user === null || user === void 0 ? void 0 : user.avatar,
                 },
             });
             return {

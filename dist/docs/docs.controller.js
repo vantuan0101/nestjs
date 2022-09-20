@@ -14,12 +14,14 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DocsController = void 0;
 const common_1 = require("@nestjs/common");
+const platform_express_1 = require("@nestjs/platform-express");
 const roles_decorator_1 = require("../auth/guard/roles.decorator");
 const roles_guard_1 = require("../auth/guard/roles.guard");
 const roles_enum_1 = require("../shared/enum/roles.enum");
 const jwt_guard_1 = require("./../auth/guard/jwt.guard");
 const docs_service_1 = require("./docs.service");
 const dto_1 = require("./dto");
+const interface_1 = require("./interface");
 let DocsController = class DocsController {
     constructor(DocsService) {
         this.DocsService = DocsService;
@@ -27,14 +29,17 @@ let DocsController = class DocsController {
     getAll(q, sort, limit, skip) {
         return this.DocsService.getAllDocs(q, sort, limit, skip);
     }
+    getOne(id) {
+        return this.DocsService.getOneDocs(id);
+    }
     getOneByName(nameApi) {
         return this.DocsService.getOneDocByName(nameApi.nameApi);
     }
-    create(dto) {
-        return this.DocsService.createDocs(dto);
+    create(dto, files) {
+        return this.DocsService.createDocs(dto, files);
     }
-    update(id, dto) {
-        return this.DocsService.updateDocs(id, dto);
+    update(id, dto, files) {
+        return this.DocsService.updateDocs(id, dto, files);
     }
     delete(id) {
         return this.DocsService.deleteDocs(+id);
@@ -51,7 +56,14 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], DocsController.prototype, "getAll", null);
 __decorate([
-    (0, common_1.Get)(':nameApi'),
+    (0, common_1.Get)(':id'),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", void 0)
+], DocsController.prototype, "getOne", null);
+__decorate([
+    (0, common_1.Get)('name/:nameApi'),
     __param(0, (0, common_1.Param)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -61,21 +73,37 @@ __decorate([
     (0, common_1.Post)(),
     (0, common_1.UseGuards)(jwt_guard_1.JwtGuard, roles_guard_1.RolesGuard),
     (0, roles_decorator_1.Roles)(roles_enum_1.RoleType.Admin),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileFieldsInterceptor)([
+        { name: 'image', maxCount: 1 },
+        { name: 'demoList', maxCount: 2 },
+        { name: 'icon', maxCount: 1 },
+    ])),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.UploadedFiles)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [dto_1.DocsDto]),
+    __metadata("design:paramtypes", [dto_1.DocsDto, Object]),
     __metadata("design:returntype", void 0)
 ], DocsController.prototype, "create", null);
 __decorate([
     (0, common_1.Patch)(':id'),
+    (0, common_1.UseGuards)(jwt_guard_1.JwtGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)(roles_enum_1.RoleType.Admin),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileFieldsInterceptor)([
+        { name: 'image', maxCount: 1 },
+        { name: 'demoList', maxCount: 2 },
+        { name: 'icon', maxCount: 1 },
+    ])),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.UploadedFiles)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, Object]),
+    __metadata("design:paramtypes", [Number, interface_1.CreateDocs, Object]),
     __metadata("design:returntype", void 0)
 ], DocsController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(':id'),
+    (0, common_1.UseGuards)(jwt_guard_1.JwtGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)(roles_enum_1.RoleType.Admin),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),

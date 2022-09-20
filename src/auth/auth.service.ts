@@ -61,6 +61,7 @@ export class AuthService {
   }
 
   async signin(dto: LoginDto, res: Response) {
+    // console.log(dto);
     try {
       // find email in the db
       const user =
@@ -89,7 +90,6 @@ export class AuthService {
       delete user.hash;
       delete user.createAt;
       delete user.updateAt;
-      delete user.id;
       // return user;
       const access_token = await this.signToken(
         user.id,
@@ -114,6 +114,16 @@ export class AuthService {
     }
   }
 
+  async logout(res: Response) {
+    res
+      .clearCookie('refresh_token')
+      .redirect('/');
+    return {
+      status: 'success',
+      message: 'Logged out',
+    };
+  }
+
   async signToken(
     userId: number,
     email: string,
@@ -127,10 +137,9 @@ export class AuthService {
     const token = await this.jwt.signAsync(
       payload,
       {
-        expiresIn: '1s',
-        // expiresIn: this.config.get(
-        //   'JWT_EXPIRES_IN',
-        // ),
+        expiresIn: this.config.get(
+          'JWT_EXPIRES_IN',
+        ),
         secret: secret,
       },
     );

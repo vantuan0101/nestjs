@@ -1,14 +1,20 @@
+import { CloudinaryService } from './../cloudinary/cloudinary.service';
 import { PrismaService } from '../prisma/prisma.service';
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
 } from '@nestjs/common';
 import { DocsDto } from './dto';
 import { CreateDocs } from './interface';
+import sharp from 'sharp';
 
 @Injectable()
 export class DocsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    public cloudinary: CloudinaryService,
+  ) {}
   async getAllDocs(
     q?: string,
     sort?: string,
@@ -91,16 +97,30 @@ export class DocsService {
       );
     }
   }
-  async createDocs(dto: DocsDto) {
-    // console.log(dto);
+  async createDocs(dto: DocsDto, files: any) {
+    // console.log(files);
     try {
+      const image =
+        await this.cloudinary.uploadCloud(
+          files.image,
+        );
+      const demoList =
+        await this.cloudinary.uploadCloud(
+          files.demoList,
+        );
+      const icon =
+        await this.cloudinary.uploadCloud(
+          files.icon,
+        );
       const Docs = await this.prisma.docs.create({
         data: {
           name: dto.name,
           title: dto.title,
           slug: dto.slug,
-          icon: dto.icon,
           desc: dto.desc,
+          icon: icon,
+          image: image,
+          demoList: demoList,
         },
       });
       return Docs;
@@ -110,20 +130,58 @@ export class DocsService {
       );
     }
   }
-  async updateDocs(id: number, dto: CreateDocs) {
+  async updateDocs(
+    id: number,
+    dto: CreateDocs,
+    files: any,
+  ) {
     // console.log(dto);
-    const data = {
-      name: dto?.name,
-      title: dto?.title,
-      slug: dto?.slug,
-      icon: dto?.icon,
-      desc: dto?.desc,
-    };
+    // console.log(files);
 
     try {
+      const { data } = await this.getOneDocs(id);
+      if (files.image) {
+        await this.cloudinary.deleteImage(
+          data.image,
+        );
+        const image =
+          await this.cloudinary.uploadCloud(
+            files.image,
+          );
+        dto.image = image;
+      }
+      if (files.icon) {
+        await this.cloudinary.deleteImage(
+          data.icon,
+        );
+        const icon =
+          await this.cloudinary.uploadCloud(
+            files.icon,
+          );
+        dto.icon = icon;
+      }
+      if (files.demoList) {
+        await this.cloudinary.deleteImage(
+          data.demoList,
+        );
+        const demoList =
+          await this.cloudinary.uploadCloud(
+            files.demoList,
+          );
+        dto.demoList = demoList;
+      }
+
       const Docs = await this.prisma.docs.update({
         where: { id },
-        data,
+        data: {
+          name: dto?.name,
+          title: dto?.title,
+          slug: dto?.slug,
+          desc: dto?.desc,
+          icon: dto?.icon,
+          image: dto?.image,
+          demoList: dto?.demoList,
+        },
       });
       return {
         status: 'success',
@@ -139,6 +197,16 @@ export class DocsService {
 
   async deleteDocs(id: number) {
     try {
+      const { data } = await this.getOneDocs(id);
+      await this.cloudinary.deleteImage(
+        data.image,
+      );
+      await this.cloudinary.deleteImage(
+        data.icon,
+      );
+      await this.cloudinary.deleteImage(
+        data.demoList,
+      );
       await this.prisma.docs.delete({
         where: { id },
       });

@@ -14,6 +14,7 @@ const docCode_module_1 = require("./DocCode/docCode.module");
 const docs_module_1 = require("./docs/docs.module");
 const prisma_module_1 = require("./prisma/prisma.module");
 const user_module_1 = require("./user/user.module");
+const cloudinary_module_1 = require("./cloudinary/cloudinary.module");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -27,6 +28,7 @@ AppModule = __decorate([
             prisma_module_1.PrismaModule,
             docs_module_1.DocsModule,
             docCode_module_1.DocCodeModule,
+            cloudinary_module_1.CloudinaryModule,
         ],
     })
 ], AppModule);

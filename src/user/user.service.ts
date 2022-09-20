@@ -26,7 +26,7 @@ export class UserService {
     }
   }
   async createUser(user: UserDto) {
-    console.log(user);
+    // console.log(user);
     try {
       const hash = await argon.hash(
         user.password,
@@ -38,6 +38,7 @@ export class UserService {
             hash,
             firstName: user.firstName,
             lastName: user.lastName,
+            avatar: 'user.avatar',
           },
         },
       );
@@ -56,7 +57,7 @@ export class UserService {
     id: number,
     user: UpdateUserDto,
   ) {
-    console.log(user);
+    // console.log(user);
     try {
       const hash = await argon.hash(
         user?.password,
@@ -69,6 +70,7 @@ export class UserService {
             lastName: user.lastName,
             email: user.email,
             hash,
+            avatar: user?.avatar,
           },
         },
       );

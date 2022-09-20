@@ -66,7 +66,6 @@ let AuthService = class AuthService {
             delete user.hash;
             delete user.createAt;
             delete user.updateAt;
-            delete user.id;
             const access_token = await this.signToken(user.id, user.email);
             const refresh_token = await this.signRefreshToken(user.id, user.email);
             res.cookie('refresh_token', refresh_token);
@@ -82,6 +81,15 @@ let AuthService = class AuthService {
             throw new common_1.ForbiddenException(error);
         }
     }
+    async logout(res) {
+        res
+            .clearCookie('refresh_token')
+            .redirect('/');
+        return {
+            status: 'success',
+            message: 'Logged out',
+        };
+    }
     async signToken(userId, email) {
         const payload = {
             sub: userId,
@@ -89,7 +97,7 @@ let AuthService = class AuthService {
         };
         const secret = this.config.get('JWT_SECRET');
         const token = await this.jwt.signAsync(payload, {
-            expiresIn: '1s',
+            expiresIn: this.config.get('JWT_EXPIRES_IN'),
             secret: secret,
         });
         return token;
